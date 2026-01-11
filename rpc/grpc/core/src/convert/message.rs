@@ -31,7 +31,7 @@ use kaspa_utils::hex::*;
 use std::{str::FromStr, sync::Arc};
 
 macro_rules! from {
-    // Pattern: bind response for custom Ok-path construction.
+    // Response capture
     ($name:ident : RpcResult<&$from_type:ty>, $to_type:ty, $ctor:block) => {
         impl From<RpcResult<&$from_type>> for $to_type {
             fn from(item: RpcResult<&$from_type>) -> Self {
@@ -47,7 +47,7 @@ macro_rules! from {
         }
     };
 
-    // Pattern: response-only conversion with no Ok payload access.
+    // Response without parameter capture
     (RpcResult<&$from_type:ty>, $to_type:ty) => {
         impl From<RpcResult<&$from_type>> for $to_type {
             fn from(item: RpcResult<&$from_type>) -> Self {
@@ -56,7 +56,7 @@ macro_rules! from {
         }
     };
 
-    // Pattern: bind request payload for custom conversion logic.
+    // Request and other capture
     ($name:ident : $from_type:ty, $to_type:ty, $body:block) => {
         impl From<$from_type> for $to_type {
             fn from($name: $from_type) -> Self {
@@ -65,7 +65,7 @@ macro_rules! from {
         }
     };
 
-    // Pattern: simple conversion where input is unused.
+    // Request and other without parameter capture
     ($from_type:ty, $to_type:ty) => {
         impl From<$from_type> for $to_type {
             fn from(_: $from_type) -> Self {
@@ -76,7 +76,7 @@ macro_rules! from {
 }
 
 macro_rules! try_from {
-    // Pattern: bind response for custom Ok-path construction.
+    // Response capture
     ($name:ident : $from_type:ty, RpcResult<$to_type:ty>, $ctor:block) => {
         impl TryFrom<$from_type> for $to_type {
             type Error = RpcError;
@@ -91,7 +91,7 @@ macro_rules! try_from {
         }
     };
 
-    // Pattern: response-only conversion with no Ok payload access.
+    // Response without parameter capture
     ($from_type:ty, RpcResult<$to_type:ty>) => {
         impl TryFrom<$from_type> for $to_type {
             type Error = RpcError;
@@ -101,7 +101,7 @@ macro_rules! try_from {
         }
     };
 
-    // Pattern: bind request payload for custom conversion logic.
+    // Request and other capture
     ($name:ident : $from_type:ty, $to_type:ty, $body:block) => {
         impl TryFrom<$from_type> for $to_type {
             type Error = RpcError;
@@ -112,7 +112,7 @@ macro_rules! try_from {
         }
     };
 
-    // Pattern: simple conversion where input is unused.
+    // Request and other without parameter capture
     ($from_type:ty, $to_type:ty) => {
         impl TryFrom<$from_type> for $to_type {
             type Error = RpcError;
